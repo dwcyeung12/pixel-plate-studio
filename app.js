@@ -28,13 +28,19 @@ function makeSTL(text,s,part='combined'){const {xs,ys,h,nx,ny}=geometry(text,s),
  for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const z=range(i,j);if(!z)continue;const [bottom,top]=z,x0=xs[i],x1=xs[i+1],y0=ys[j],y1=ys[j+1];quad([x0,y0,bottom],[x0,y1,bottom],[x1,y1,bottom],[x1,y0,bottom]);quad([x0,y0,top],[x1,y0,top],[x1,y1,top],[x0,y1,top]);for(const [di,dj] of [[-1,0],[1,0],[0,-1],[0,1]]){const neighbor=range(i+di,j+dj),cut=neighbor?Math.min(top,Math.max(bottom,neighbor[1])):bottom;if(cut>=top)continue;const levels=[cut,...(part==='combined'&&cut<s.base&&s.base<top?[s.base]:[]),top];for(let k=0;k<levels.length-1;k++){let lo=levels[k],hi=levels[k+1];if(di===-1)quad([x0,y0,lo],[x0,y0,hi],[x0,y1,hi],[x0,y1,lo]);if(di===1)quad([x1,y1,lo],[x1,y1,hi],[x1,y0,hi],[x1,y0,lo]);if(dj===-1)quad([x1,y0,lo],[x1,y0,hi],[x0,y0,hi],[x0,y0,lo]);if(dj===1)quad([x0,y1,lo],[x0,y1,hi],[x1,y1,hi],[x1,y1,lo])}}}
  const header=new ArrayBuffer(84);new DataView(header).setUint32(80,count,true);return new Blob([header,...chunks,current.slice(0,offset)],{type:'model/stl'})}
 function makeStandSTL(base){
- // A freestanding U-shaped support. Slot width is the plate thickness plus 0.4 mm.
- const xs=[0,20],ys=[0,3,3+base+.4,6+base+.4],heights=[8,2,8],triangles=[];
- function tri(a,b,c){triangles.push([...a,...b,...c])}function quad(a,b,c,d){tri(a,b,c);tri(a,c,d)}
- for(let j=0;j<3;j++){let x0=xs[0],x1=xs[1],y0=ys[j],y1=ys[j+1],z=heights[j];
-  quad([x0,y0,0],[x0,y1,0],[x1,y1,0],[x1,y0,0]);quad([x0,y0,z],[x1,y0,z],[x1,y1,z],[x0,y1,z]);
-  for(const [di,dj] of [[-1,0],[1,0],[0,-1],[0,1]]){const n=di?0:heights[j+dj]||0;if(n>=z)continue;const levels=[n,...(n<2&&z>2?[2]:[]),z];for(let k=0;k<levels.length-1;k++){let lo=levels[k],hi=levels[k+1];if(di===-1)quad([x0,y0,lo],[x0,y0,hi],[x0,y1,hi],[x0,y1,lo]);if(di===1)quad([x1,y1,lo],[x1,y1,hi],[x1,y0,hi],[x1,y0,lo]);if(dj===-1)quad([x1,y0,lo],[x1,y0,hi],[x0,y0,hi],[x0,y0,lo]);if(dj===1)quad([x0,y1,lo],[x0,y1,hi],[x1,y1,hi],[x1,y1,lo])}}
- }const buffer=new ArrayBuffer(84+triangles.length*50),dv=new DataView(buffer);dv.setUint32(80,triangles.length,true);triangles.forEach((a,i)=>a.forEach((v,k)=>dv.setFloat32(84+i*50+12+k*4,v,true)));return new Blob([buffer],{type:'model/stl'});
+ // A 45-degree slot in a wide base, extruded across the width of the support.
+ // Slot clearance is measured perpendicular to the tilted plate.
+ const slot=(base+.4)*Math.SQRT2,low=3,high=11,rise=high-low,leftBottom=9,leftTop=leftBottom+rise,rightBottom=leftBottom+slot,rightTop=rightBottom+rise,length=rightTop+8;
+ const poly=[[0,0],[length,0],[length,2],[rightTop+3,high],[rightTop,high],[rightBottom,low],[leftBottom,low],[leftTop,high],[leftTop-3,high],[0,2]];
+ function cross(a,b,c){return (b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0])}
+ function inside(p,a,b,c){const e=1e-9;return cross(a,b,p)>=-e&&cross(b,c,p)>=-e&&cross(c,a,p)>=-e}
+ const remaining=poly.map((_,i)=>i),caps=[];
+ while(remaining.length>3){let found=false;for(let k=0;k<remaining.length;k++){const ia=remaining[(k+remaining.length-1)%remaining.length],ib=remaining[k],ic=remaining[(k+1)%remaining.length],a=poly[ia],b=poly[ib],c=poly[ic];if(cross(a,b,c)<=1e-9)continue;if(remaining.some(j=>j!==ia&&j!==ib&&j!==ic&&inside(poly[j],a,b,c)))continue;caps.push([ia,ib,ic]);remaining.splice(k,1);found=true;break}if(!found)throw new Error('Unable to triangulate the stand')}
+ caps.push([...remaining]);const triangles=[];
+ function vertex(x,p){return [x,p[0],p[1]]}function tri(a,b,c){triangles.push([...a,...b,...c])}function quad(a,b,c,d){tri(a,b,c);tri(a,c,d)}
+ for(const [a,b,c] of caps){tri(vertex(0,poly[c]),vertex(0,poly[b]),vertex(0,poly[a]));tri(vertex(20,poly[a]),vertex(20,poly[b]),vertex(20,poly[c]))}
+ for(let i=0;i<poly.length;i++){const p=poly[i],q=poly[(i+1)%poly.length];quad(vertex(20,p),vertex(0,p),vertex(0,q),vertex(20,q))}
+ const buffer=new ArrayBuffer(84+triangles.length*50),dv=new DataView(buffer);dv.setUint32(80,triangles.length,true);triangles.forEach((a,i)=>a.forEach((v,k)=>dv.setFloat32(84+i*50+12+k*4,v,true)));return new Blob([buffer],{type:'model/stl'});
 }
 function getSettings(){const t=input.value.toUpperCase(),bad=[...t].some(c=>!Object.hasOwn(FONT,c)),geo=layout(t,mountInput.value),raw=sizeInput.value.trim(),target=raw===''?geo.length:Number(raw),scale=target/geo.length,base=Number(baseInput.value),relief=Number(reliefInput.value);let error='';if(!t.trim())error='Enter a number or text.';else if(bad)error='Use A–Z, 0–9, spaces, + - . / or the icon buttons.';else if(t.length>MAX)error='Use at most 32 characters.';else if(!Number.isFinite(target)||target<geo.length*.8||target>Math.min(1000,1000*geo.length/W))error=`Choose a length from ${Math.ceil(geo.length*.8)} to ${Math.floor(Math.min(1000,1000*geo.length/W))} mm.`;else if(!Number.isFinite(base)||base<1||base>10||!Number.isFinite(relief)||relief<.4||relief>5)error='Use base thickness 1–10 mm and raised height 0.4–5 mm.';return {t,...geo,target,scale,base,relief,style:styleInput.value,error}}
 let yaw=-.3,tilt=.75,drag=null;

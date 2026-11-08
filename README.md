@@ -21,7 +21,7 @@ For a single-colour printer, change filament after the base is complete and befo
 
 For a multicolour slicer, download the **base** and **raised** STLs and import them together as parts of one object, preserving their original positions. The raised part retains its height above the base. Assign each part a filament in the slicer and check alignment in the preview. Importing them individually with automatic centring or placing each part on the bed can break alignment.
 
-The optional stand STL is a separate U-shaped support with a slot based on the selected base thickness plus 0.4 mm clearance. Print it flat; two stands may be useful for longer plates. Tolerances depend on the printer and material, so check the fit before printing several.
+The optional stand STL is a separate 45-degree dashboard support with an angled slot based on the selected base thickness plus 0.4 mm clearance. Print the stand flat with its wide base on the build plate; two stands may be useful for longer plates. Secure the supports to the dashboard and check the fit before printing several.
 
 ## Run offline or host
 
