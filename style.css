@@ -3,3 +3,5 @@
 .icon-buttons svg{display:block;width:23px;height:23px;margin:auto;fill:currentColor}
 
 .icon-buttons{grid-template-columns:repeat(8,minmax(0,1fr))}
+
+@media(min-width:701px){.pixel-editor summary{cursor:default}}
