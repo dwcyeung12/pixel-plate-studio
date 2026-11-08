@@ -2,6 +2,8 @@
 
 A browser-based generator for 3D-printable pixel-style name and number plates. Enter text, preview the design, and export an STL. The app runs entirely in your browser and works with any 3D printer that can fit the model.
 
+**Use it online:** [3dmodel.publicwc.uk](https://3dmodel.publicwc.uk/)
+
 ## Use the generator
 
 Open the hosted site or download the latest release, extract it, and open `index.html` in a modern browser. No installation, account, backend, or internet connection is needed after the files are downloaded.
