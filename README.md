@@ -10,7 +10,7 @@ A browser-based generator for 3D-printable pixel-style name and number plates. C
 2. Add an icon with the buttons. Draw a custom 8 × 8 icon or import an image to convert it to pixels, then select **Custom** to insert it. Conversion runs locally; edit the pixels to improve the result.
 3. Choose a pixel lettering style, plate length, base thickness, raised height, and mounting option. Hole dimensions scale with the plate, so check their final size in your slicer.
 4. Optionally enter your printer's X and Y bed dimensions to check whether the plate fits, including a 90-degree rotation. The check does not account for brims, margins or machine-specific restrictions.
-5. Drag the 3D preview to rotate it and use the zoom slider. It is a schematic preview; inspect the STL in your slicer for exact rounded edges, holes and toolpaths.
+5. Drag the 3D preview to rotate it and use the zoom slider. The preview uses the same geometry as the exported model. Inspect the STL and toolpaths in your slicer before printing.
 6. Select **Export STL** for a combined model. Choose your printer and material in your slicer and print the base flat.
 
 Preview colours are for visualisation only: STL files do not store colour assignments. Pixel size changes with the plate length; check that small features can be printed with your nozzle.
