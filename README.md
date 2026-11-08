@@ -1,30 +1,28 @@
 # Pixel Plate Studio
 
-A browser-based generator for 3D-printable pixel-style name and number plates. Enter text, preview the design, and export an STL. The app runs entirely in your browser and works with any 3D printer that can fit the model.
+A browser-based generator for 3D-printable pixel-style name and number plates. Create a model, preview it in 3D, and download STL files. The app runs entirely in your browser and is not tied to a printer brand.
 
 **Use it online:** [3dmodel.publicwc.uk](https://3dmodel.publicwc.uk/)
 
-## Use the generator
+## Create a plate
 
-Open the hosted site or download the latest release, extract it, and open `index.html` in a modern browser. No installation, account, backend, or internet connection is needed after the files are downloaded.
+1. Enter up to 32 letters, numbers or spaces. The characters `+`, `-`, `.`, and `/` are also supported. Letters become uppercase.
+2. Add an icon with the buttons. Draw a custom 8 × 8 icon or import an image to convert it to pixels, then select **Custom** to insert it. Conversion runs locally; edit the pixels to improve the result.
+3. Choose a pixel lettering style, plate length, base thickness, raised height, and mounting option. Hole dimensions scale with the plate, so check their final size in your slicer.
+4. Optionally enter your printer's X and Y bed dimensions to check whether the plate fits, including a 90-degree rotation. The check does not account for brims, margins or machine-specific restrictions.
+5. Drag the 3D preview to rotate it and use the zoom slider. It is a schematic preview; inspect the STL in your slicer for exact rounded edges, holes and toolpaths.
+6. Select **Export STL** for a combined model. Choose your printer and material in your slicer and print the base flat.
 
-1. Enter up to 32 characters: letters, numbers, spaces, `+`, `-`, `.` and `/`.
-2. Use the icon buttons to insert a heart (`!`), smile (`@`), sad face (`#`), or phone (`$`). Letters are converted to uppercase.
-3. Leave plate length blank for automatic sizing, or enter a custom length in millimetres. The length and width scale together; thickness remains 3 mm. Check the displayed dimensions against your printer's build area.
-4. Choose preview colours, then select **Export STL**. The STL contains geometry only; colours are not embedded.
-5. Open the STL in your slicer, select your printer and material, and place the plate flat on the build plate. Check the toolpath preview before printing.
+Preview colours are for visualisation only: STL files do not store colour assignments. Pixel size changes with the plate length; check that small features can be printed with your nozzle.
 
-## Two-colour printing
+## Two-colour printing and stands
 
-The base is 2 mm thick. The raised text, icons, and border occupy the next 1 mm. For two colours, configure your slicer to change filament after the base is complete and before the first raised layer. With 0.2 mm layers, this is normally the layer at 2.2 mm; verify the exact transition in the slicer preview. The text and border will be the same colour using this method.
+For a single-colour printer, change filament after the base is complete and before the first raised layer; the base thickness is shown in the controls. Select a layer height that aligns with this transition and verify it in your slicer.
 
-## Host your own copy
+For a multicolour slicer, download the **base** and **raised** STLs and import them together as parts of one object, preserving their original positions. The raised part retains its height above the base. Assign each part a filament in the slicer and check alignment in the preview. Importing them individually with automatic centring or placing each part on the bed can break alignment.
 
-This is a static website: `index.html`, `style.css`, `font.js` and `app.js` are the complete application. Upload them together to a static host such as Cloudflare Pages. No build command or server-side code is required. For Git integration, use the repository root as the site directory; new commits can trigger deployments automatically.
+The optional stand STL is a separate U-shaped support with a slot based on the selected base thickness plus 0.4 mm clearance. Print it flat; two stands may be useful for longer plates. Tolerances depend on the printer and material, so check the fit before printing several.
 
-## Notes
+## Run offline or host
 
-- The preview is a top view; the exported plate has a flat base and raised pixels.
-- Pixel size changes when you adjust the plate length. Verify small features in your slicer, particularly with larger nozzles.
-- A long plate may exceed your printer's build area. Reduce its length or use a larger printer.
-- Your text stays in your browser; no plate content is sent to a server by the application.
+Download the latest release, extract the ZIP and open `index.html` in a modern browser. Once downloaded, no server, account or internet connection is needed. The files `index.html`, `style.css`, `font.js` and `app.js` form the static application; they can also be uploaded to a static website host with no build command or backend.
