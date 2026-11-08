@@ -1,5 +1,5 @@
 'use strict';
-const W=22.8, P=1.9, PX=1.5, CP=15.6, MAX=16;
+const W=22.8, P=1.9, PX=1.5, CP=15.6, MAX=32;
 const input=document.getElementById('text'), svg=document.getElementById('plate'), download=document.getElementById('download');
 const lengthOf=t=>t.length*CP+8;
 const sizeInput=document.getElementById('target-length'),baseColor=document.getElementById('base-color'),raisedColor=document.getElementById('raised-color');
@@ -16,11 +16,11 @@ const header=new ArrayBuffer(84);new DataView(header).setUint32(80,count,true);r
 function getSettings(){
  const t=input.value.toUpperCase(),bad=[...t].some(c=>!Object.hasOwn(FONT,c));
  const len=lengthOf(t), raw=sizeInput.value.trim(), target=raw===''?len:Number(raw), scale=target/len;
- const minLength=len*.8, maxLength=Math.min(260,260*len/W);
+ const minLength=len*.8, maxLength=Math.min(1000,1000*len/W);
  let error='';
  if(!t.trim()) error='Enter a number or text.';
  else if(bad) error='Use A–Z, 0–9, spaces, + - . / or the icon buttons.';
- else if(t.length>MAX) error='Use at most 16 characters.';
+ else if(t.length>MAX) error='Use at most 32 characters.';
  else if(!Number.isFinite(target)||target<minLength||target>maxLength) error=`Choose a length from ${Math.ceil(minLength)} to ${Math.floor(maxLength)} mm for this text.`;
  return {t,len,target,scale,error};
 }
