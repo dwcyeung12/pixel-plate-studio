@@ -7,16 +7,20 @@ const $=id=>document.getElementById(id),input=$('text'),canvas=$('plate'),downlo
 const baseInput=$('base-thickness'),reliefInput=$('relief-height'),styleInput=$('font-style'),mountInput=$('mount'),bedX=$('bed-x'),bedY=$('bed-y');
 const outputBase=$('download-base'),outputRelief=$('download-relief'),outputStand=$('download-stand'),zoomInput=$('zoom');
 function layout(t,mount){let left=mount==='none'?0:9,right=mount==='screws'?9:0;const length=t.length*CP+8+left+right;return {left,length,holes:mount==='none'?[]:mount==='keyring'?[[4.5,W/2,1.6]]:[[4.5,W/2,1.6],[length-4.5,W/2,1.6]]}}
-function glyph(ch,style){let rows=FONT[ch];if(!/[A-Z0-9]/.test(ch)||style==='pixel')return rows;
+function glyph(ch,style){let rows=FONT[ch];if(!/[A-Z0-9]/.test(ch)||style==='pixel'||style==='rounded'||style==='solid')return rows;
  if(style==='bold')return rows.map(row=>row.split('').map((x,i)=>x==='1'||(i>0&&row[i-1]==='1')?'1':'0').join(''));
- if(style==='rounded')return rows.map((row,r)=>row.split('').map((v,c)=>{if(v==='0')return '0';const n=(rows[r-1]?.[c]==='1')+(rows[r+1]?.[c]==='1')+(row[c-1]==='1')+(row[c+1]==='1');return n>=2?'1':'0'}).join(''));
+
  return rows.map((row,r)=>row.split('').map((v,c)=>v==='1'&&r===3&&(c===2||c===5)?'0':v).join(''));
 }
 function dots(t,settings){const out=[];[...t].forEach((ch,n)=>glyph(ch,settings.style).forEach((row,r)=>[...row].forEach((v,c)=>{if(v==='1')out.push([4+settings.left+n*CP+c*P,4+(7-r)*P])})));return out}
 function rounded(x,y,x0,x1,y0,y1,r){if(x<x0||x>x1||y<y0||y>y1)return false;let dx=Math.max(x0+r-x,0,x-(x1-r)),dy=Math.max(y0+r-y,0,y-(y1-r));return dx*dx+dy*dy<=r*r}
 function grid(end,edges,extra=[]){const values=new Set([0,end]);for(const v of edges)if(v>0&&v<end)values.add(+v.toFixed(5));for(const origin of [0,end-6])for(let k=0;k<=30;k++){let v=+(origin+k*.2).toFixed(5);if(v>=0&&v<=end)values.add(v)}for(const [center,r] of extra)for(let k=0;k<=Math.ceil(2*r/.2);k++){let v=+(center-r+k*.2).toFixed(5);if(v>0&&v<end)values.add(v)}return [...values].sort((a,b)=>a-b)}
-function geometry(t,s){const len=s.length,d=dots(t,s);const xs=grid(len,[...d.flatMap(([x])=>[x,x+PX]),1.5,len-1.5,6,len-6],s.holes.map(([x,y,r])=>[x,r]));const ys=grid(W,[...d.flatMap(([,y])=>[y,y+PX]),1.5,W-1.5,6,W-6],s.holes.map(([x,y,r])=>[y,r]));const nx=xs.length-1,ny=ys.length-1,h=Array.from({length:nx},()=>new Uint8Array(ny));
-for(let i=0;i<nx;i++){const x=(xs[i]+xs[i+1])/2;for(let j=0;j<ny;j++){const y=(ys[j]+ys[j+1])/2;if(!rounded(x,y,0,len,0,W,6)||s.holes.some(([hx,hy,r])=>(x-hx)**2+(y-hy)**2<r*r))continue;const border=!rounded(x,y,1.5,len-1.5,1.5,W-1.5,4.5);const ci=Math.floor((x-4-s.left)/CP),cx=(x-4-s.left-ci*CP)/P,cy=(y-4)/P,col=Math.floor(cx),row=7-Math.floor(cy);const dot=ci>=0&&ci<t.length&&col>=0&&col<8&&row>=0&&row<8&&(cx-Math.floor(cx))*P<PX&&(cy-Math.floor(cy))*P<PX&&glyph(t[ci],s.style)[row][col]==='1';h[i][j]=border||dot?2:1}}return {xs,ys,h,nx,ny}}
+function geometry(t,s){const len=s.length,d=dots(t,s);const stops=s.style==='rounded'?[0,.3,1.2,PX]:[0,PX];const xs=grid(len,[...d.flatMap(([x])=>stops.map(k=>x+k)),1.5,len-1.5,6,len-6],s.holes.map(([x,y,r])=>[x,r]));const ys=grid(W,[...d.flatMap(([,y])=>stops.map(k=>y+k)),1.5,W-1.5,6,W-6],s.holes.map(([x,y,r])=>[y,r]));const nx=xs.length-1,ny=ys.length-1,h=Array.from({length:nx},()=>new Uint8Array(ny));
+for(let i=0;i<nx;i++){const x=(xs[i]+xs[i+1])/2;for(let j=0;j<ny;j++){const y=(ys[j]+ys[j+1])/2;if(!rounded(x,y,0,len,0,W,6)||s.holes.some(([hx,hy,r])=>(x-hx)**2+(y-hy)**2<r*r))continue;const border=!rounded(x,y,1.5,len-1.5,1.5,W-1.5,4.5);const ci=Math.floor((x-4-s.left)/CP),cx=(x-4-s.left-ci*CP)/P,cy=(y-4)/P,col=Math.floor(cx),row=7-Math.floor(cy);let dot=false;
+ if(ci>=0&&ci<t.length&&col>=0&&col<8&&row>=0&&row<8){const ch=t[ci],rows=glyph(ch,s.style),ux=(cx-Math.floor(cx))*P,uy=(cy-Math.floor(cy))*P,on=rows[row][col]==='1',letter=/[A-Z0-9]/.test(ch),center=ux<PX&&uy<PX;
+ dot=on&&center&&(s.style!=='rounded'||!letter||rounded(ux,uy,0,PX,0,PX,.6));
+ if(s.style==='solid'&&letter&&on){if(ux>=PX&&uy<PX&&col<7&&rows[row][col+1]==='1')dot=true;if(uy>=PX&&ux<PX&&row>0&&rows[row-1][col]==='1')dot=true;}}
+h[i][j]=border||dot?2:1}}return {xs,ys,h,nx,ny}}
 function makeSTL(text,s,part='combined'){const {xs,ys,h,nx,ny}=geometry(text,s),chunks=[];let current=new ArrayBuffer(50*4096),view=new DataView(current),offset=0,count=0;
  function tri(a,b,c){if(offset===current.byteLength){chunks.push(current);current=new ArrayBuffer(50*4096);view=new DataView(current);offset=0}let k=offset+12;for(const [index,v] of [...a,...b,...c].entries()){view.setFloat32(k,index%3===2?v:v*s.scale,true);k+=4}offset+=50;count++}
  function quad(a,b,c,d){tri(a,b,c);tri(a,c,d)}
