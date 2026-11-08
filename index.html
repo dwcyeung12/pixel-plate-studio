@@ -1,14 +1,86 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1529"><title>Pixel Plate Studio</title><link rel="stylesheet" href="style.css"></head>
-<body><main class="shell"><header><div class="mark" aria-hidden="true">▦</div><div><h1>Pixel Plate <span>Studio</span></h1><p>Create a 3D printable pixel plate for any 3D printer.</p></div></header>
-<section class="controls"><div class="field"><div class="line"><label for="text">Text <small>(numbers or letters)</small></label><span id="counter"></span></div><input id="text" value="$12345678!" autocomplete="off" spellcheck="false" aria-describedby="help"><p id="help">A–Z, 0–9, spaces, + - . / · Letters print uppercase · Up to 32 characters</p></div><div class="icons"><label>Insert icon</label><div class="icon-buttons"><button type="button" data-icon="!" aria-label="Insert heart"><b>♥</b><span>Heart</span></button><button type="button" data-icon="@" aria-label="Insert smile"><b>☻</b><span>Smile</span></button><button type="button" data-icon="#" aria-label="Insert sad face"><b>☹</b><span>Sad</span></button><button type="button" data-icon="$" aria-label="Insert phone"><b>☎</b><span>Phone</span></button><button type="button" data-icon="*" aria-label="Insert star"><b>★</b><span>Star</span></button><button type="button" data-icon="^" aria-label="Insert arrow"><b>➜</b><span>Arrow</span></button><button type="button" data-icon="~" aria-label="Insert custom icon"><b>▦</b><span>Custom</span></button></div></div></section>
-<section class="options" aria-label="Plate settings"><div><label for="target-length">Plate length <small>(mm)</small></label><div class="length-control"><input id="target-length" type="number" min="1" max="1000" step="1" placeholder="Auto" inputmode="decimal"><button id="reset-length" type="button">Auto size</button></div><p>Leave blank for the standard size. The plate scales evenly.</p></div><div><label>Preview colours <small>(visual only)</small></label><div class="colors"><label for="base-color"><input type="color" id="base-color" value="#102036"> Base</label><label for="raised-color"><input type="color" id="raised-color" value="#81f3c3"> Numbers & border</label></div><p>STL files do not store colours. Choose filaments in your slicer.</p></div></section>
-<section class="options advanced" aria-label="Model settings">
-<div><label for="font-style">Text style</label><select id="font-style"><option value="solid">Block (connected)</option><option value="pixel">Classic pixel</option><option value="bold">Bold pixel</option><option value="rounded">Rounded pixel</option><option value="stencil">Stencil pixel</option></select><p>Block joins pixels into readable strokes; icons keep their pixel design.</p></div>
-<div><label>Thickness <small>(mm)</small></label><div class="inline-fields"><label for="base-thickness">Base <input id="base-thickness" type="number" min="1" max="10" step="0.2" value="2"></label><label for="relief-height">Raised <input id="relief-height" type="number" min="0.4" max="5" step="0.2" value="1"></label></div></div>
-<div><label for="mount">Mounting</label><select id="mount"><option value="none">Plain plate</option><option value="keyring">One keyring hole</option><option value="screws">Two screw holes</option></select><p id="hole-info">Choose a mounting option to add holes.</p></div>
-<div><label>Printer bed <small>(optional, mm)</small></label><div class="inline-fields"><label for="bed-x">X <input id="bed-x" type="number" min="1" max="2000" placeholder="e.g. 220"></label><label for="bed-y">Y <input id="bed-y" type="number" min="1" max="2000" placeholder="e.g. 220"></label></div><p id="bed-status">Enter both dimensions to check fit.</p></div>
-</section>
-<details class="pixel-editor"><summary>Draw a custom pixel icon</summary><p>Click squares to draw; then select Custom to insert it into your text.</p><div id="pixel-grid" role="group" aria-label="Custom 8 by 8 pixel icon"></div><div class="icon-actions"><button type="button" id="clear-pixels">Clear icon</button><label class="upload-icon" for="icon-file">Import image as pixels</label><input id="icon-file" type="file" accept="image/*"><span>Converted to 8 × 8 pixels on this device.</span></div></details>
-<section class="preview"><div class="preview-title"><h2>Preview <span>— Pixel plate</span></h2><div class="preview-tools"><button id="top-view" class="view-button" type="button">Top view</button><button id="angle-view" class="view-button" type="button">3D view</button><span class="tag">DRAG TO ROTATE · MODEL PREVIEW</span><label for="zoom">Zoom <input type="range" id="zoom" min="0.6" max="2" step="0.1" value="1"></label></div></div><div class="canvas"><canvas id="plate" role="img" aria-label="Rotatable 3D plate preview"></canvas><p id="placeholder" hidden>Enter your text to see the preview.</p></div><div class="measurements"><div><span class="metric-icon">↔</span><div><small>Dimensions (mm)</small><strong id="dimensions">—</strong></div></div><div><span class="metric-icon">T<span style="font-size:.65em">T</span></span><div><small>Character count</small><strong id="count">—</strong></div></div><div><span class="metric-icon">▣</span><div><small>Smallest pixel width</small><strong id="pixel-size">—</strong></div></div></div></section>
-<div class="bottom"><section class="guidance"><span class="guide-icon">▧</span><div><h2>Print guidance <span>— all 3D printers</span></h2><p>Print flat without supports. Import the STL into your slicer, select your printer, and check that the model fits your build plate.</p><p>For two colours, change filament after the base or export the separate parts below. Import both parts together as one multi-part object and preserve their positions.</p></div></section><div class="export"><button id="download" type="button">↓ <span>Export STL</span></button><div class="part-buttons"><button id="download-base" type="button">Download base STL</button><button id="download-relief" type="button">Download raised STL</button><button id="download-stand" type="button">Download stand STL</button></div><p class="part-note">For multicolour slicers: import both parts together without auto-centring. Print two stands for longer plates.</p><p id="status" role="status">Generated in your browser. Your text stays on this device.</p></div></div><footer>PIXEL PLATE STUDIO <span>•</span> 3D PRINTABLE BY DESIGN</footer></main><script src="font.js"></script><script src="app.js"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc">
+  <title>Pixel Plate Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <header class="brand">
+      <div class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div><h1>Pixel Plate Studio</h1><p>3D name &amp; number plate generator</p></div>
+    </header>
+    <div class="sidebar-content">
+      <section class="control-section">
+        <div class="label-row"><label for="text">Text <span>(letters / numbers)</span></label><span id="counter" class="counter"></span></div>
+        <input id="text" value="$12345678!" autocomplete="off" spellcheck="false" aria-describedby="text-help">
+        <p class="help" id="text-help">A–Z, 0–9, spaces, + - . / · Letters print uppercase</p>
+      </section>
+      <section class="control-section">
+        <h2>Insert an icon</h2>
+        <div class="icon-buttons">
+          <button type="button" data-icon="!" aria-label="Insert heart"><b>♥</b><span>Heart</span></button>
+          <button type="button" data-icon="@" aria-label="Insert smile"><b>☻</b><span>Smile</span></button>
+          <button type="button" data-icon="#" aria-label="Insert sad face"><b>☹</b><span>Sad</span></button>
+          <button type="button" data-icon="$" aria-label="Insert phone"><b>☎</b><span>Phone</span></button>
+          <button type="button" data-icon="*" aria-label="Insert star"><b>★</b><span>Star</span></button>
+          <button type="button" data-icon="^" aria-label="Insert arrow"><b>➜</b><span>Arrow</span></button>
+          <button type="button" data-icon="~" aria-label="Insert custom icon"><b>▦</b><span>Custom</span></button>
+        </div>
+      </section>
+      <section class="control-section">
+        <label for="font-style">Text style</label>
+        <select id="font-style"><option value="solid">Block (connected)</option><option value="pixel">Classic pixel</option><option value="bold">Bold pixel</option><option value="rounded">Rounded pixel</option><option value="stencil">Stencil pixel</option></select>
+        <p class="help">Icons keep their pixel design.</p>
+      </section>
+      <section class="control-section model-fields" aria-label="Model settings">
+        <div class="field-row"><label for="target-length">Plate length</label><div class="field-with-unit"><input id="target-length" type="number" min="1" max="1000" step="1" placeholder="Auto" inputmode="decimal"><span>mm</span></div><button type="button" class="text-button" id="reset-length">Auto</button></div>
+        <div class="field-row"><label for="base-thickness">Base thickness</label><div class="field-with-unit"><input id="base-thickness" type="number" min="1" max="10" step="0.2" value="2"><span>mm</span></div></div>
+        <div class="field-row"><label for="relief-height">Raised height</label><div class="field-with-unit"><input id="relief-height" type="number" min="0.4" max="5" step="0.2" value="1"><span>mm</span></div></div>
+      </section>
+      <section class="control-section">
+        <label for="mount">Mounting</label>
+        <select id="mount"><option value="none">Plain plate</option><option value="keyring">One keyring hole</option><option value="screws">Two screw holes</option></select>
+        <p class="help" id="hole-info">Choose a mounting option to add holes.</p>
+      </section>
+      <section class="control-section">
+        <h2>Printer bed <span>(optional)</span></h2>
+        <div class="bed-fields"><label for="bed-x">X <input id="bed-x" type="number" min="1" max="2000" placeholder="220"> <span>mm</span></label><span class="multiply">×</span><label for="bed-y">Y <input id="bed-y" type="number" min="1" max="2000" placeholder="220"> <span>mm</span></label></div>
+        <p class="help" id="bed-status">Enter both dimensions to check fit.</p>
+      </section>
+      <section class="control-section colours">
+        <h2>Preview colours <span>(visual only)</span></h2>
+        <div class="colour-options"><label for="base-color"><input type="color" id="base-color" value="#e7eaf1"> Base</label><label for="raised-color"><input type="color" id="raised-color" value="#244dd8"> Text &amp; border</label></div>
+        <p class="help">STL files don't include colours.</p>
+      </section>
+      <details class="pixel-editor">
+        <summary><span class="summary-icon">▦</span> Custom icon editor <span class="summary-help">8 × 8</span></summary>
+        <p class="help">Draw your icon, then select Custom above to insert it.</p>
+        <div id="pixel-grid" role="group" aria-label="Custom 8 by 8 pixel icon"></div>
+        <div class="icon-actions"><button type="button" id="clear-pixels">Clear</button><label class="upload-icon" for="icon-file">Import image</label><input id="icon-file" type="file" accept="image/*"></div>
+        <p class="help">Images are converted to pixels on your device.</p>
+      </details>
+    </div>
+  </aside>
+  <main class="workspace">
+    <div class="workspace-heading"><div><h2>3D plate preview</h2><p>Design your plate and see it take shape.</p></div><span class="privacy-note"><span class="privacy-dot"></span> Made on your device</span></div>
+    <section class="preview" aria-label="Model preview">
+      <div class="preview-toolbar"><div><span class="preview-label">YOUR DESIGN</span><span class="preview-hint">Drag to rotate</span></div><div class="preview-tools"><button id="angle-view" class="view-button" type="button">3D view</button><button id="top-view" class="view-button" type="button">Top view</button><label for="zoom">Zoom <input type="range" id="zoom" min="0.6" max="2" step="0.1" value="1"></label></div></div>
+      <div class="canvas"><canvas id="plate" role="img" aria-label="Rotatable 3D plate preview"></canvas><p id="placeholder" hidden>Enter your text to see the preview.</p></div>
+      <div class="measurements"><div><small>PLATE DIMENSIONS</small><strong id="dimensions">—</strong></div><div><small>CHARACTERS</small><strong id="count">—</strong></div><div><small>PIXEL WIDTH</small><strong id="pixel-size">—</strong></div></div>
+    </section>
+    <section class="export-section"><div class="export-heading"><div><h2>Export your model</h2><p>Ready to print? Download an STL for your slicer.</p></div><button id="download" class="primary-button" type="button"><span aria-hidden="true">↓</span> Export combined STL</button></div>
+      <div class="part-buttons"><button id="download-base" type="button"><span>01</span><strong>Base STL</strong><small>Base only</small></button><button id="download-relief" type="button"><span>02</span><strong>Raised STL</strong><small>Text &amp; border</small></button><button id="download-stand" type="button"><span>03</span><strong>Stand STL</strong><small>Optional support</small></button></div>
+      <p class="part-note">For multicolour slicers, import the base and raised parts together without auto-centring. Print two stands for longer plates.</p><p id="status" role="status">Generated in your browser. Your text stays on this device.</p>
+    </section>
+    <details class="print-guide"><summary>Printing tips <span>+</span></summary><p>Print the plate flat without supports. Check the model fits your printer and inspect the toolpath in your slicer.</p><p>For two colours, change filament after the base or export the separate parts above. Import both parts as one multi-part object and preserve their positions.</p></details>
+    <footer>PIXEL PLATE STUDIO <span>·</span> DESIGNED TO BE PRINTED</footer>
+  </main>
+</div>
+<script src="font.js"></script><script src="app.js"></script>
+</body>
+</html>

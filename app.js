@@ -59,7 +59,7 @@ function drawPreview(s){
  faces.sort((a,b)=>b.depth-a.depth);
  for(const f of faces){ctx.beginPath();f.points.forEach(([x,y,z],i)=>{const p=project(x,y,z);if(i===0)ctx.moveTo(...p);else ctx.lineTo(...p)});ctx.closePath();ctx.fillStyle=f.color;ctx.fill()}
  // Trace the actual grid edges of each hole, making the cut-outs visible at any colour.
- if(s.holes.length){ctx.beginPath();for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){if(!cells[i][j])continue;let x0=xs[i],x1=xs[i+1],y0=ys[j],y1=ys[j+1];for(const [di,dj] of [[-1,0],[1,0],[0,-1],[0,1]]){let ii=i+di,jj=j+dj;if(ii<0||ii>=nx||jj<0||jj>=ny||cells[ii][jj])continue;let mx=(xs[ii]+xs[ii+1])/2,my=(ys[jj]+ys[jj+1])/2;if(!s.holes.some(([x,y,r])=>(mx-x)**2+(my-y)**2<r*r))continue;let a,b;if(di===-1){a=[x0,y0];b=[x0,y1]}else if(di===1){a=[x1,y0];b=[x1,y1]}else if(dj===-1){a=[x0,y0];b=[x1,y0]}else{a=[x0,y1];b=[x1,y1]}ctx.moveTo(...project(...a,s.base));ctx.lineTo(...project(...b,s.base))}}ctx.strokeStyle='#ffffff';ctx.lineWidth=1.4;ctx.stroke()}
+ if(s.holes.length){ctx.beginPath();for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){if(!cells[i][j])continue;let x0=xs[i],x1=xs[i+1],y0=ys[j],y1=ys[j+1];for(const [di,dj] of [[-1,0],[1,0],[0,-1],[0,1]]){let ii=i+di,jj=j+dj;if(ii<0||ii>=nx||jj<0||jj>=ny||cells[ii][jj])continue;let mx=(xs[ii]+xs[ii+1])/2,my=(ys[jj]+ys[jj+1])/2;if(!s.holes.some(([x,y,r])=>(mx-x)**2+(my-y)**2<r*r))continue;let a,b;if(di===-1){a=[x0,y0];b=[x0,y1]}else if(di===1){a=[x1,y0];b=[x1,y1]}else if(dj===-1){a=[x0,y0];b=[x1,y0]}else{a=[x0,y1];b=[x1,y1]}ctx.moveTo(...project(...a,s.base));ctx.lineTo(...project(...b,s.base))}}ctx.strokeStyle='#244bdd';ctx.lineWidth=1.4;ctx.stroke()}
 
 }
 
