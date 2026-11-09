@@ -1,6 +1,6 @@
 # Pixel Plate Studio
 
-A browser-based generator for 3D-printable pixel-style name and number plates. Create a model, preview it in 3D, and download STL files. The app runs entirely in your browser and is not tied to a printer brand.
+A browser-based generator for 3D-printable pixel-style name and number plates. Create a model, preview it in 3D, and download STL, 3MF or OBJ files. The app runs entirely in your browser and is not tied to a printer brand.
 
 **Use it online:** [3dmodel.publicwc.uk](https://3dmodel.publicwc.uk/)
 
@@ -13,7 +13,7 @@ A browser-based generator for 3D-printable pixel-style name and number plates. C
 5. Drag the 3D preview to rotate it and use the zoom slider. The preview uses the same geometry as the exported model. Inspect the STL and toolpaths in your slicer before printing.
 6. Select **Export STL** for a combined model. Choose your printer and material in your slicer and print the base flat.
 
-Preview colours are for visualisation only: STL files do not store colour assignments. Pixel size changes with the plate length; check that small features can be printed with your nozzle.
+Preview colours are for visualisation only: the exported files do not include colour assignments; export the base and raised parts separately for multi-colour printing. Pixel size changes with the plate length; check that small features can be printed with your nozzle.
 
 ## Two-colour printing and stands
 
@@ -25,4 +25,4 @@ The optional stand STL is a separate 45-degree dashboard support with a shallow 
 
 ## Run offline or host
 
-Download the latest release, extract the ZIP and open `index.html` in a modern browser. Once downloaded, no server, account or internet connection is needed. The files `index.html`, `style.css`, `font.js` and `app.js` form the static application; they can also be uploaded to a static website host with no build command or backend.
+Download the latest release, extract the ZIP and open `index.html` in a modern browser. Once downloaded, no server, account or internet connection is needed. The files `index.html`, `style.css`, `font.js`, `formats.js` and `app.js` form the static application; they can also be uploaded to a static website host with no build command or backend.

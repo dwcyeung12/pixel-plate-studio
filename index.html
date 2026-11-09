@@ -32,6 +32,13 @@
           <button type="button" data-icon="^" aria-label="Insert arrow"><b>➜</b><span>Arrow</span></button>
           <button type="button" data-icon="~" aria-label="Insert custom icon"><b>▦</b><span>Custom</span></button>
         </div>
+      <details class="pixel-editor">
+        <summary><span class="summary-icon">▦</span> Custom icon editor <span class="summary-help">8 × 8</span></summary>
+        <p class="help">Draw your icon, then select Custom above to insert it.</p>
+        <div id="pixel-grid" role="group" aria-label="Custom 8 by 8 pixel icon"></div>
+        <div class="icon-actions"><button type="button" id="clear-pixels">Clear</button><label class="upload-icon" for="icon-file">Import image</label><input id="icon-file" type="file" accept="image/*"></div>
+        <p class="help">Images are converted to pixels on your device.</p>
+      </details>
       </section>
       <section class="control-section">
         <label for="font-style">Text style</label>
@@ -56,15 +63,9 @@
       <section class="control-section colours">
         <h2>Preview colours <span>(visual only)</span></h2>
         <div class="colour-options"><label for="base-color"><input type="color" id="base-color" value="#e7eaf1"> Base</label><label for="raised-color"><input type="color" id="raised-color" value="#244dd8"> Text &amp; border</label></div>
-        <p class="help">STL files don't include colours.</p>
+        <p class="help">Colours are for preview; exported files have no colour assignments.</p>
       </section>
-      <details class="pixel-editor">
-        <summary><span class="summary-icon">▦</span> Custom icon editor <span class="summary-help">8 × 8</span></summary>
-        <p class="help">Draw your icon, then select Custom above to insert it.</p>
-        <div id="pixel-grid" role="group" aria-label="Custom 8 by 8 pixel icon"></div>
-        <div class="icon-actions"><button type="button" id="clear-pixels">Clear</button><label class="upload-icon" for="icon-file">Import image</label><input id="icon-file" type="file" accept="image/*"></div>
-        <p class="help">Images are converted to pixels on your device.</p>
-      </details>
+
     </div>
   </aside>
   <main class="workspace">
@@ -74,14 +75,14 @@
       <div class="canvas"><canvas id="plate" role="img" aria-label="Rotatable 3D plate preview"></canvas><p id="placeholder" hidden>Enter your text to see the preview.</p></div>
       <div class="measurements"><div><small>PLATE DIMENSIONS</small><strong id="dimensions">—</strong></div><div><small>CHARACTERS</small><strong id="count">—</strong></div><div><small>PIXEL WIDTH</small><strong id="pixel-size">—</strong></div></div>
     </section>
-    <section class="export-section"><div class="export-heading"><div><h2>Export your model</h2><p>Ready to print? Download an STL for your slicer.</p></div><button id="download" class="primary-button" type="button"><span aria-hidden="true">↓</span> Export combined STL</button></div>
-      <div class="part-buttons"><button id="download-base" type="button"><span>01</span><strong>Base STL</strong><small>Base only</small></button><button id="download-relief" type="button"><span>02</span><strong>Raised STL</strong><small>Text &amp; border</small></button><button id="download-stand" type="button"><span>03</span><strong>Stand STL</strong><small>45° dashboard support</small></button></div>
+    <section class="export-section"><div class="export-heading"><div><h2>Export your model</h2><p>Choose a format for your slicer or 3D software.</p></div><div class="export-controls"><label for="export-format">Format</label><select id="export-format"><option value="stl">STL</option><option value="3mf">3MF</option><option value="obj">OBJ</option></select><button id="download" class="primary-button" type="button"><span aria-hidden="true">↓</span> <span id="format-main-label">Export combined STL</span></button></div></div>
+      <div class="part-buttons"><button id="download-base" type="button"><span>01</span><strong id="format-base-label">Base STL</strong><small>Base only</small></button><button id="download-relief" type="button"><span>02</span><strong id="format-relief-label">Raised STL</strong><small>Text &amp; border</small></button><button id="download-stand" type="button"><span>03</span><strong id="format-stand-label">Stand STL</strong><small>45° dashboard support</small></button></div>
       <p class="part-note">For multicolour slicers, import the base and raised parts together without auto-centring. The 45° stand is separate; print two for longer plates and secure them to the dashboard.</p><p id="status" role="status">Generated in your browser. Your text stays on this device.</p>
     </section>
     <details class="print-guide"><summary>Printing tips <span>+</span></summary><p>Print the plate flat without supports. Check the model fits your printer and inspect the toolpath in your slicer.</p><p>For two colours, change filament after the base or export the separate parts above. Import both parts as one multi-part object and preserve their positions.</p></details>
     <footer>PIXEL PLATE STUDIO <span>·</span> DESIGNED TO BE PRINTED</footer>
   </main>
 </div>
-<script src="font.js"></script><script src="app.js"></script>
+<script src="font.js"></script><script src="formats.js"></script><script src="app.js"></script>
 </body>
 </html>
